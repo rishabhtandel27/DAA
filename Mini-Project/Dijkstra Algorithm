@@ -1,0 +1,70 @@
+import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
+
+def draw_graph(graph, pos, node_colors=None, edge_colors=None, path=None):
+    plt.figure(figsize=(8, 6))
+    nx.draw(graph, pos, with_labels=True, node_color=node_colors, edge_color=edge_colors, node_size=700, font_size=15, font_color='white')
+    
+    if path:
+        path_edges = [(path[i], path[i + 1]) for i in range(len(path) - 1)]
+        nx.draw_networkx_edges(graph, pos, edgelist=path_edges, edge_color='orange', width=3)
+    
+    plt.show()
+
+def dijkstra(graph, start):
+    distances = {node: float('inf') for node in graph.nodes}
+    distances[start] = 0
+    visited = set()
+    previous_nodes = {node: None for node in graph.nodes}
+
+    while visited != set(graph.nodes):
+        unvisited_nodes = {node: distances[node] for node in graph.nodes if node not in visited}
+        current_node = min(unvisited_nodes, key=unvisited_nodes.get)
+        visited.add(current_node)
+
+        for neighbor in graph.neighbors(current_node):
+            tentative_value = distances[current_node] + graph[current_node][neighbor]['weight']
+            if tentative_value < distances[neighbor]:
+                distances[neighbor] = tentative_value
+                previous_nodes[neighbor] = current_node
+
+    return distances, previous_nodes
+
+def shortest_path(graph, start, end):
+    distances, previous_nodes = dijkstra(graph, start)
+    path = []
+    current_node = end
+
+    while current_node is not None:
+        path.append(current_node)
+        current_node = previous_nodes[current_node]
+
+    path = path[::-1]
+    return path, distances
+
+# Create a graph
+G = nx.Graph()
+edges = [
+    ('A', 'B', 1), ('A', 'C', 4), ('B', 'C', 2), ('B', 'D', 5),
+    ('C', 'D', 1), ('C', 'E', 3), ('D', 'E', 2)
+]
+G.add_weighted_edges_from(edges)
+
+# Define positions for nodes
+pos = nx.spring_layout(G)
+
+# Find shortest path from A to E
+start_node = 'A'
+end_node = 'E'
+path, distances = shortest_path(G, start_node, end_node)
+
+# Print distances and path
+print("Distances from start node:", distances)
+print("Shortest path from", start_node, "to", end_node, ":", path)
+
+# Visualize the graph
+node_colors = ['lightblue' if node in path else 'lightgray' for node in G.nodes]
+edge_colors = ['gray' for _ in G.edges]
+
+draw_graph(G, pos, node_colors=node_colors, edge_colors=edge_colors, path=path)
