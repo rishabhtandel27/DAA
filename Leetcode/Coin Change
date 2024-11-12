@@ -1,0 +1,21 @@
+class Solution:
+    def coinChange(self, coins, amount):
+        # Initialize a list to store the minimum number of coins for each amount
+        dp = [float('inf')] * (amount + 1)  # Set initial values to infinity
+        dp[0] = 0  # Base case: 0 coins needed to make amount 0
+
+        # Loop through each coin
+        for coin in coins:
+            # Update the dp array for all amounts that can be reached with the current coin
+            for x in range(coin, amount + 1):
+                dp[x] = min(dp[x], dp[x - coin] + 1)
+
+        # Check if we found a solution for the given amount
+        return dp[amount] if dp[amount] != float('inf') else -1
+
+# Example usage:
+solution = Solution()
+coins = [1, 2, 5]
+amount = 11
+output = solution.coinChange(coins, amount)
+print(output)  # Output: 3
