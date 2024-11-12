@@ -1,0 +1,29 @@
+class Solution:
+    def floodFill(self, image, sr, sc, color):
+        # Get the current color of the pixel at (sr, sc)
+        original_color = image[sr][sc]
+        
+        # If the original color is the same as the target color, no need to do anything
+        if original_color == color:
+            return image
+        
+        def dfs(r, c):
+            # Check if the current pixel is within the bounds of the image
+            if r < 0 or r >= len(image) or c < 0 or c >= len(image[0]):
+                return
+            # Check if the current pixel has the same color as the original color
+            if image[r][c] != original_color:
+                return
+            # Change the color of the current pixel
+            image[r][c] = color
+            # Explore the four possible directions: up, down, left, right
+            dfs(r + 1, c)  # down
+            dfs(r - 1, c)  # up
+            dfs(r, c + 1)  # right
+            dfs(r, c - 1)  # left
+        
+        # Start the DFS from the given starting point
+        dfs(sr, sc)
+        
+        return image
+
