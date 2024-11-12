@@ -1,0 +1,31 @@
+from functools import cmp_to_key
+
+class Solution:
+    def largestNumber(self, nums):
+        # Convert integers to strings
+        nums_str = list(map(str, nums))
+        
+        # Define a comparison function
+        def compare(x, y):
+            # Compare concatenated results
+            if x + y > y + x:
+                return -1  # x should come before y
+            elif x + y < y + x:
+                return 1   # y should come before x
+            else:
+                return 0   # They are equal
+
+        # Sort the numbers based on the custom comparison
+        nums_str.sort(key=cmp_to_key(compare))
+        
+        # Join the sorted strings
+        largest_num = ''.join(nums_str)
+        
+        # Handle the case where the largest number is "0"
+        return largest_num if largest_num[0] != '0' else '0'
+
+# Example usage:
+solution = Solution()
+nums = [10, 2]
+output = solution.largestNumber(nums)
+print(output)  # Output: "210"
